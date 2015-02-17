@@ -19,7 +19,7 @@ public class Main {
 				Socket socket = s.accept();
 				System.out.println("Connection to : "+s.getInetAddress());
 				System.out.println(socket.toString());
-				ThreadClient t =  new ThreadClient(socket);
+				FTPClient t =  new FTPClient(socket);
 				t.start();
 			}
 			
