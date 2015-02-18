@@ -32,7 +32,7 @@ public class SocketReaderTest {
 	public void testGetCommand() {
 		Socket sk;
 		try {
-			sk = new Socket("localhost",8888);
+			sk = new Socket("localhost",2121);
 			SocketReader sr = new SocketReader(sk);
 			BufferedWriter br = new BufferedWriter(new OutputStreamWriter(sk.getOutputStream()));
 			br.write("USER myUser is me");

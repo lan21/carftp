@@ -1,5 +1,7 @@
 package ftp;
 
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
@@ -14,14 +16,14 @@ public class FTPClient extends Thread {
 	protected SocketWriter commandWriter;
 	protected SocketReader commandReader;
 	protected Socket dataSocket;
-	protected SocketWriter dataWriter;
-	protected SocketReader dataReader;
+	protected DataOutputStream dataWriter;
+	protected DataInputStream dataReader;
 	private String username;
 	private String password;
 	private String directory;
 	private String additionalAnswer;
 	
-	public SocketReader getDataReader() {
+	public DataInputStream getDataReader() {
 		return dataReader;
 	}
 	
@@ -29,11 +31,11 @@ public class FTPClient extends Thread {
 		return dataSocket;
 	}
 	
-	public SocketWriter getDataWriter() {
+	public DataOutputStream getDataWriter() {
 		return dataWriter;
 	}
 	
-	public void setDataReader(SocketReader dataReader) {
+	public void setDataReader(DataInputStream dataReader) {
 		this.dataReader = dataReader;
 	}
 	
@@ -41,7 +43,7 @@ public class FTPClient extends Thread {
 		this.dataSocket = dataSocket;
 	}
 	
-	public void setDataWriter(SocketWriter dataWriter) {
+	public void setDataWriter(DataOutputStream dataWriter) {
 		this.dataWriter = dataWriter;
 	}
 	
@@ -71,6 +73,18 @@ public class FTPClient extends Thread {
 	
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	
+	public SocketReader getCommandReader() {
+		return commandReader;
+	}
+	
+	public Socket getCommandSocket() {
+		return commandSocket;
+	}
+	
+	public SocketWriter getCommandWriter() {
+		return commandWriter;
 	}
 	
 	/*public FTPClient(Socket clientSocket) {
@@ -113,15 +127,19 @@ public class FTPClient extends Thread {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		AnswerBuilder answerBuilder = AnswerBuilder.instance;
 		try {
+			String answer = answerBuilder.buildAnswer(220,this.additionalAnswer);
+			this.commandWriter.writeAnswer(answer);
+			
 			while (!this.commandSocket.isClosed()) {
-				String answer = answerBuilder.buildAnswer(220,this.additionalAnswer);
-				this.commandWriter.writeAnswer(answer);
-				String commande[] = this.commandReader.getCommand();
-				this.printReceivedCommand(commande);
+				
 				try {
+
+					String commande[] = this.commandReader.getCommand();
+					this.printReceivedCommand(commande);
 					ProcessCommand processCommand = processBuilder.processBuild(commande);
 					int codeAnswer = processCommand.process(commande, this);
 					answer = answerBuilder.buildAnswer(codeAnswer,this.additionalAnswer);
+					System.out.println(answer);
 					this.commandWriter.writeAnswer(answer);
 				}
 				catch (ClassNotFoundException e) {

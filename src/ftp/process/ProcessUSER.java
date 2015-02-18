@@ -21,7 +21,8 @@ public class ProcessUSER implements ProcessCommand {
 
 				while (scanfile.hasNextLine()){
 					String[] userPassPath = scanfile.nextLine().trim().split(" ");
-					if (userPassPath[0] != param[1]){
+					System.out.println("*"+userPassPath[0]+"*");
+					if (!userPassPath[0].equals(param[1])){
 						continue;
 					}
 					else {
