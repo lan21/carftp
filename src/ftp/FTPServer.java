@@ -6,8 +6,6 @@ import java.net.Socket;
 import java.util.LinkedList;
 import java.util.List;
 
-import ftp.main.FTPClient;
-
 public class FTPServer extends ServerSocket implements Runnable{
 	private int nbClients;
 	private List<Socket> listeClient;
@@ -19,7 +17,7 @@ public class FTPServer extends ServerSocket implements Runnable{
 	}
 	
 	public void execute(){
-		
+		this.run();
 	}
 
 	@Override
@@ -28,6 +26,7 @@ public class FTPServer extends ServerSocket implements Runnable{
 			while (true){
 				/*Client Socket creation*/
 				Socket socket = this.accept();
+				System.out.println("new client added");
 				FTPClient t =  new FTPClient(socket);
 				t.start();
 			}

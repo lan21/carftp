@@ -1,17 +1,13 @@
-package ftp.main;
+package ftp;
 
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-import exception.UnknownPasswordException;
-import exception.UnknownUserException;
+import ftp.answer.AnswerBuilder;
 import ftp.io.SocketReader;
 import ftp.io.SocketWriter;
+import ftp.process.ProcessBuilder;
+import ftp.process.ProcessCommand;
 
 public class FTPClient extends Thread {
 	protected Socket socketClient;
@@ -20,8 +16,36 @@ public class FTPClient extends Thread {
 	private String username;
 	private String password;
 	private String directory;
+	private String additionalAnswer;
 	
+	public String getPassword() {
+		return this.password;
+	}
+	
+	public void setAdditionalAnswer(String additionalAnswer) {
+		this.additionalAnswer = additionalAnswer;
+	}
+	
+	public String getUsername() {
+		return this.username;
+	}
+	
+	public String getDirectory() {
+		return this.directory;
+	}
 
+	public void setDirectory(String directory) {
+		this.directory = directory;
+	}
+	
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
 	/*public FTPClient(Socket clientSocket) {
 		this.socketClient = clientSocket;
 		this.password = "test";
@@ -55,37 +79,43 @@ public class FTPClient extends Thread {
 		this.socketClient = clientSocket;
 		this.sw = new SocketWriter(clientSocket);
 		this.sr = new SocketReader(clientSocket);
+		this.additionalAnswer = "";
 	}
 
 	public void processRequest() {
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		AnswerBuilder answerBuilder = AnswerBuilder.instance;
 		try {
 			while (!this.socketClient.isClosed()) {
-				String commandeCourante = this.sr.readLine();
-				System.out.println(commandeCourante);
+				String answer = answerBuilder.buildAnswer(220,this.additionalAnswer);
+				this.sw.writeAnswer(answer);
+				String commande[] = this.sr.getCommand();
+				this.printReceivedCommand(commande);
 				try {
-					this.processUser(commandeCourante);
-					
-					/*commandeCourante = this.br.readLine();
-					System.out.println("  " + commandeCourante);
-					this.processSyst(commandeCourante);*/
-					
-					commandeCourante = this.sr.readLine();
-					System.out.println("  " + commandeCourante);
-					this.processPassword(commandeCourante);
-					
-					sw.write("Bienvenue " + this.username + "\n");
-					sw.flush();
+					ProcessCommand processCommand = processBuilder.processBuild(commande);
+					int codeAnswer = processCommand.process(commande, this);
+					answer = answerBuilder.buildAnswer(codeAnswer,this.additionalAnswer);
+					this.sw.writeAnswer(answer);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				} 
 
 			}
 			this.socketClient.close();
+			this.sr.close();
+			this.sw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	
+	private void printReceivedCommand(String[] commande) {
+		System.out.print("---->");
+		System.out.print(commande[0]+" ");
+		System.out.print(commande[1]);
+		System.out.println();
+	}
+
 	/*public void processRequest() {
 		try {
 			while (!this.socketClient.isClosed()) {				
@@ -106,7 +136,7 @@ public class FTPClient extends Thread {
 		}
 	}*/
 
-	public void processPassword(String password)
+	/*public void processPassword(String password)
 			throws UnknownPasswordException, IOException {
 		System.out.println(password.substring(0, 4));
 		if (!password.substring(0, 4).equalsIgnoreCase("PASS")) {
@@ -161,7 +191,7 @@ public class FTPClient extends Thread {
 			sw.write("215 Unix.\n\r");
 			sw.flush();
 		}
-	}
+	}*/
 
 	@Override
 	public void run() {

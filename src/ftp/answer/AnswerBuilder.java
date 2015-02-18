@@ -5,7 +5,7 @@ import java.util.HashMap;
 public class AnswerBuilder {
 	public HashMap<Integer, String> anwswers;
 	
-	public AnswerBuilder instance = new AnswerBuilder();
+	public static AnswerBuilder instance = new AnswerBuilder();
 	
 	private AnswerBuilder(){
 		this.anwswers = new HashMap<Integer, String>();
@@ -18,7 +18,7 @@ public class AnswerBuilder {
 		this.anwswers.put(502,"Command not implemented");
 	}
 
-	public String getAnswer(int codeAnswer){
-		return codeAnswer+" "+this.anwswers.get(codeAnswer);
+	public String buildAnswer(int codeAnswer,String additionalAnswer){
+		return codeAnswer+" "+this.anwswers.get(codeAnswer)+additionalAnswer;
 	}
 }

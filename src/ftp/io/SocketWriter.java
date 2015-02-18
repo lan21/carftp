@@ -11,4 +11,9 @@ public class SocketWriter extends BufferedWriter {
 		super(new OutputStreamWriter(socket.getOutputStream()));
 	}
 
+	public void writeAnswer(String answer) throws IOException {
+		this.write(answer+"\r\n");
+		this.flush();
+	}
+
 }

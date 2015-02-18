@@ -26,9 +26,9 @@ public class ProcessUSER implements ProcessCommand {
 					}
 					else {
 						scanfile.close();
-						client.setUserName(userPassPath[0]);
+						client.setUsername(userPassPath[0]);
 						client.setPassword(userPassPath[1]);
-						client.setPath(userPassPath[2]);
+						client.setDirectory(userPassPath[2]);
 						return 331;
 					}
 				}

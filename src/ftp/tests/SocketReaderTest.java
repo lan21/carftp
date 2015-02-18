@@ -11,6 +11,7 @@ import java.net.UnknownHostException;
 
 import org.junit.Test;
 
+import ftp.FTPServer;
 import ftp.io.SocketReader;
 
 public class SocketReaderTest {
@@ -18,7 +19,7 @@ public class SocketReaderTest {
 	@Test
 	public void testSocketReader() {
 		try {
-			Socket sk = new Socket(InetAddress.getByName(null),9090);
+			Socket sk = new Socket(InetAddress.getByName(null),2121);
 			SocketReader sr = new SocketReader(sk);
 			assertNotNull(sk);
 			assertNotNull(sr);			
