@@ -123,7 +123,12 @@ public class FTPClient extends Thread {
 					int codeAnswer = processCommand.process(commande, this);
 					answer = answerBuilder.buildAnswer(codeAnswer,this.additionalAnswer);
 					this.commandWriter.writeAnswer(answer);
-				} catch (Exception e) {
+				}
+				catch (ClassNotFoundException e) {
+					answer = answerBuilder.buildAnswer(520,this.additionalAnswer);
+					this.commandWriter.writeAnswer(answer);
+				}
+				catch (Exception e) {
 					System.out.println(e.getMessage());
 				} 
 
@@ -138,8 +143,9 @@ public class FTPClient extends Thread {
 	
 	private void printReceivedCommand(String[] commande) {
 		System.out.print("---->");
-		System.out.print(commande[0]+" ");
-		System.out.print(commande[1]);
+		for (int i = 0; i < commande.length; i++) {
+			System.out.print(commande[i]+" ");
+		}
 		System.out.println();
 	}
 
