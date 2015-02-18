@@ -10,13 +10,40 @@ import ftp.process.ProcessBuilder;
 import ftp.process.ProcessCommand;
 
 public class FTPClient extends Thread {
-	protected Socket socketClient;
-	protected SocketWriter sw;
-	protected SocketReader sr;
+	protected Socket commandSocket;
+	protected SocketWriter commandWriter;
+	protected SocketReader commandReader;
+	protected Socket dataSocket;
+	protected SocketWriter dataWriter;
+	protected SocketReader dataReader;
 	private String username;
 	private String password;
 	private String directory;
 	private String additionalAnswer;
+	
+	public SocketReader getDataReader() {
+		return dataReader;
+	}
+	
+	public Socket getDataSocket() {
+		return dataSocket;
+	}
+	
+	public SocketWriter getDataWriter() {
+		return dataWriter;
+	}
+	
+	public void setDataReader(SocketReader dataReader) {
+		this.dataReader = dataReader;
+	}
+	
+	public void setDataSocket(Socket dataSocket) {
+		this.dataSocket = dataSocket;
+	}
+	
+	public void setDataWriter(SocketWriter dataWriter) {
+		this.dataWriter = dataWriter;
+	}
 	
 	public String getPassword() {
 		return this.password;
@@ -76,9 +103,9 @@ public class FTPClient extends Thread {
 	}*/
 	
 	public FTPClient(Socket clientSocket) throws IOException{
-		this.socketClient = clientSocket;
-		this.sw = new SocketWriter(clientSocket);
-		this.sr = new SocketReader(clientSocket);
+		this.commandSocket = clientSocket;
+		this.commandWriter = new SocketWriter(clientSocket);
+		this.commandReader = new SocketReader(clientSocket);
 		this.additionalAnswer = "";
 	}
 
@@ -86,24 +113,24 @@ public class FTPClient extends Thread {
 		ProcessBuilder processBuilder = new ProcessBuilder();
 		AnswerBuilder answerBuilder = AnswerBuilder.instance;
 		try {
-			while (!this.socketClient.isClosed()) {
+			while (!this.commandSocket.isClosed()) {
 				String answer = answerBuilder.buildAnswer(220,this.additionalAnswer);
-				this.sw.writeAnswer(answer);
-				String commande[] = this.sr.getCommand();
+				this.commandWriter.writeAnswer(answer);
+				String commande[] = this.commandReader.getCommand();
 				this.printReceivedCommand(commande);
 				try {
 					ProcessCommand processCommand = processBuilder.processBuild(commande);
 					int codeAnswer = processCommand.process(commande, this);
 					answer = answerBuilder.buildAnswer(codeAnswer,this.additionalAnswer);
-					this.sw.writeAnswer(answer);
+					this.commandWriter.writeAnswer(answer);
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				} 
 
 			}
-			this.socketClient.close();
-			this.sr.close();
-			this.sw.close();
+			this.commandSocket.close();
+			this.commandReader.close();
+			this.commandWriter.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
