@@ -1,6 +1,6 @@
 package ftp.process;
 
-import ftp.main.FTPClient;
+import ftp.FTPClient;
 
 public class ProcessCDUP implements ProcessCommand {
 

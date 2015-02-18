@@ -1,24 +1,44 @@
 package ftp.process;
 
-import ftp.main.FTPClient;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
+
+import ftp.FTPClient;
 
 public class ProcessUSER implements ProcessCommand {
-	
-	private String test;
-	
-	public ProcessUSER(){
-		this.test = "test";
-	}
+
 
 	@Override
 	public int process(String[] param, FTPClient client) {
-		if(param[0].equals(this.test))
-			return 331;
-		else if(param.equals("anonymous")){
+		if(param[1].equals("anonymous")){
 			return 230;
 		}
-		else
+		else {
+			Scanner scanfile;
+			try {
+				scanfile = new Scanner(new File("data/log.txt"));
+
+				while (scanfile.hasNextLine()){
+					String[] userPassPath = scanfile.nextLine().trim().split(" ");
+					if (userPassPath[0] != param[1]){
+						continue;
+					}
+					else {
+						scanfile.close();
+						client.setUserName(userPassPath[0]);
+						client.setPassword(userPassPath[1]);
+						client.setPath(userPassPath[2]);
+						return 331;
+					}
+				}
+				scanfile.close();
+			} catch (FileNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return 332;
+		}
 	}
 
 }

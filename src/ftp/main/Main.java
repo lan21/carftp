@@ -3,6 +3,7 @@ package ftp.main;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import ftp.FTPClient;
 
 public class Main {
 	
