@@ -1,17 +1,18 @@
 package ftp.process;
 
+import ftp.main.FTPClient;
+
 public class ProcessUSER implements ProcessCommand {
 	
-	private String userName;
-	public ProcessUSER instance = new ProcessUSER();
+	private String test;
 	
-	private ProcessUSER(){
-		this.userName = "myTest";
+	public ProcessUSER(){
+		this.test = "test";
 	}
 
 	@Override
-	public int process(String param) {
-		if(param.equals(this.userName))
+	public int process(String[] param, FTPClient client) {
+		if(param[0].equals(this.test))
 			return 331;
 		else if(param.equals("anonymous")){
 			return 230;

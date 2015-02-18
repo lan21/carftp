@@ -2,13 +2,12 @@ package ftp.process;
 
 import ftp.main.FTPClient;
 
-public class ProcessSYST implements ProcessCommand {
-	
-	public ProcessSYST(){};
-	
+public class ProcessPWD implements ProcessCommand {
+
 	@Override
 	public int process(String[] param, FTPClient client) {
-		return 215;
+		// TODO Auto-generated method stub
+		return 257;
 	}
 
 }

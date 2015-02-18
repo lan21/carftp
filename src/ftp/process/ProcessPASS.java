@@ -1,16 +1,15 @@
 package ftp.process;
 
+import ftp.main.FTPClient;
+
 public class ProcessPASS implements ProcessCommand {
 	
-	private String userName;
-
-	public ProcessPASS(String userName){
-		this.userName = userName;
+	public ProcessPASS(){
 	}
 
 	@Override
-	public int process(String password) {
-		if(password.equals("password")){
+	public int process(String[] password, FTPClient client) {
+		if(password[0].equals("password")){
 			return 230;
 		}
 		else return 530;
