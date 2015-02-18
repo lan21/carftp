@@ -6,7 +6,7 @@ public class ProcessCWD implements ProcessCommand {
 
 	@Override
 	public int process(String[] param, FTPClient client) {
-		// TODO Auto-generated method stub
+		client.setDirectory(param[1]);
 		return 212;
 	}
 

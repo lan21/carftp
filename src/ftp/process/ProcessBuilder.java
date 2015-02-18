@@ -10,16 +10,4 @@ public class ProcessBuilder {
 		return cmd;
 	}
 
-
-	public static void main(String[]args) throws ClassNotFoundException, InstantiationException, IllegalAccessException{
-		String[] processString = {"USER", "test"};
-		String[] processString2 = {"CWD", "test"};
-		ProcessBuilder pb = new ProcessBuilder();
-		System.out.println((pb.processBuild(processString) instanceof ProcessCommand));
-		System.out.println((pb.processBuild(processString) instanceof ProcessUSER));
-		System.out.println((pb.processBuild(processString) instanceof ProcessSYST));
-		System.out.println((pb.processBuild(processString2) instanceof ProcessCWD));
-
-	}
-
 }
