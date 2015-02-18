@@ -10,15 +10,19 @@ import java.net.Socket;
 
 import exception.UnknownPasswordException;
 import exception.UnknownUserException;
+import ftp.io.SocketReader;
+import ftp.io.SocketWriter;
 
-public class ThreadClient extends Thread {
+public class FTPClient extends Thread {
 	protected Socket socketClient;
-	protected BufferedWriter bw;
-	protected BufferedReader br;
+	protected SocketWriter sw;
+	protected SocketReader sr;
 	private String username;
 	private String password;
+	private String directory;
+	
 
-	public ThreadClient(Socket clientSocket) {
+	/*public FTPClient(Socket clientSocket) {
 		this.socketClient = clientSocket;
 		this.password = "test";
 		this.username = "test123";
@@ -38,21 +42,25 @@ public class ThreadClient extends Thread {
 
 			bw.flush();
 
-			/* cette ligne en revanche s'affiche */
+			/* cette ligne en revanche s'affiche 
 			System.out.println("Client created.");
 
 		} catch (IOException e) {
 			System.out.println("error");
 			e.printStackTrace();
 		}
+	}*/
+	
+	public FTPClient(Socket clientSocket) throws IOException{
+		this.socketClient = clientSocket;
+		this.sw = new SocketWriter(clientSocket);
+		this.sr = new SocketReader(clientSocket);
 	}
-
-
 
 	public void processRequest() {
 		try {
 			while (!this.socketClient.isClosed()) {
-				String commandeCourante = this.br.readLine();
+				String commandeCourante = this.sr.readLine();
 				System.out.println(commandeCourante);
 				try {
 					this.processUser(commandeCourante);
@@ -61,12 +69,12 @@ public class ThreadClient extends Thread {
 					System.out.println("  " + commandeCourante);
 					this.processSyst(commandeCourante);*/
 					
-					commandeCourante = this.br.readLine();
+					commandeCourante = this.sr.readLine();
 					System.out.println("  " + commandeCourante);
 					this.processPassword(commandeCourante);
 					
-					bw.write("Bienvenue " + this.username + "\n");
-					bw.flush();
+					sw.write("Bienvenue " + this.username + "\n");
+					sw.flush();
 				} catch (Exception e) {
 					System.out.println(e.getMessage());
 				} 
@@ -104,8 +112,8 @@ public class ThreadClient extends Thread {
 		if (!password.substring(0, 4).equalsIgnoreCase("PASS")) {
 			System.out.println("Password not ok");
 			try {
-				bw.write("331 User name okay, need password.".toCharArray());
-				bw.flush();
+				sw.write("331 User name okay, need password.".toCharArray());
+				sw.flush();
 			} catch (IOException e) {
 				throw new UnknownPasswordException("Server error");
 			}
@@ -117,8 +125,8 @@ public class ThreadClient extends Thread {
 						"331 User name okay, need password.\n");
 			}
 			else{
-				bw.write("200 OK. user logged in\r\n".toCharArray());
-				bw.flush();
+				sw.write("200 OK. user logged in\r\n".toCharArray());
+				sw.flush();
 			}
 		}
 
@@ -137,8 +145,8 @@ public class ThreadClient extends Thread {
 				throw new UnknownUserException("");
 			} else {
 				System.out.println("User ok");
-				bw.write("331 User name okay, need password.\n");
-				bw.flush();
+				sw.write("331 User name okay, need password.\n");
+				sw.flush();
 			}
 		}
 	}
@@ -150,8 +158,8 @@ public class ThreadClient extends Thread {
 			throw new UnknownUserException("");
 		} else {
 			System.out.println("Syst ok");
-			bw.write("215 Unix.\n\r");
-			bw.flush();
+			sw.write("215 Unix.\n\r");
+			sw.flush();
 		}
 	}
 

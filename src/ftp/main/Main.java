@@ -9,12 +9,17 @@ public class Main {
 	
 	public static void main(String[] args) {
 		try {
-			ServerSocket s = new ServerSocket(2122);
-			System.out.println("Serveur créé sur le port 2122");		
+			@SuppressWarnings("resource")
+			ServerSocket s = new ServerSocket(2121);
+			System.out.println("Server created on port 2121");		
+			System.out.println("Waiting connection...");
 			
 			while (true){
-				System.out.println("En attente de connexion");
-				ThreadClient t =  new ThreadClient(s.accept());
+				/*Client Socket creation*/
+				Socket socket = s.accept();
+				System.out.println("Connection to : "+s.getInetAddress());
+				System.out.println(socket.toString());
+				FTPClient t =  new FTPClient(socket);
 				t.start();
 			}
 			
