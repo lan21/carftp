@@ -6,8 +6,7 @@ public class ProcessCDUP implements ProcessCommand {
 
 	@Override
 	public int process(String[] param, FTPClient client) {
-		// TODO Auto-generated method stub
-		return 212;
+		return (new ProcessCWD().process(param, client));
 	}
 
 }

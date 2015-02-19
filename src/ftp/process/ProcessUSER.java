@@ -12,7 +12,7 @@ public class ProcessUSER implements ProcessCommand {
 	@Override
 	public int process(String[] param, FTPClient client) {
 		if(param[1].equals("anonymous")){
-			client.setUser("anonymous","","/",false,true);
+			client.setUser("anonymous","","/home/rakotoarivony/developpement/CAR/tp1/ftpFolder/sampleFolder",false,true);
 			client.setCurrentDirectory(client.getDirectory());
 			return 230;			
 		}
@@ -23,7 +23,6 @@ public class ProcessUSER implements ProcessCommand {
 
 				while (scanfile.hasNextLine()){
 					String[] userPassPath = scanfile.nextLine().trim().split(" ");
-					System.out.println("*"+userPassPath[0]+"*");
 					if (!userPassPath[0].equals(param[1])){
 						continue;
 					}

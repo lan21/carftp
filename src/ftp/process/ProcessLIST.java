@@ -12,33 +12,26 @@ import java.util.Date;
 
 import ftp.FTPClient;
 import ftp.answer.AnswerBuilder;
-
+/**
+ * this class is used when the client asks for the list of file in the directory
+ * @author rakotoarivony
+ *
+ */
 public class ProcessLIST implements ProcessCommand {
 
 	@Override
 	public int process(String[] param, FTPClient client) {
-		if (param.length < 2) {
-			File currentDirectory = new File(client.getCurrentDirectory());
-			File[] fileList = currentDirectory.listFiles();
-			String result = "";
-			
+		File currentDirectory = new File(client.getCurrentDirectory());
+		File[] fileList = currentDirectory.listFiles();
+		String fileInfo = "";
+		if (param.length < 2) {			
 			try {
-				String partialAnswer = AnswerBuilder.instance.buildAnswer(150,
-						"");
+				String partialAnswer = AnswerBuilder.instance.buildAnswer(150,"");
 				client.getCommandWriter().writeAnswer(partialAnswer);
-				result = "total "+fileList.length;
-				client.getDataWriter().writeBytes(result+"\r\n");
-				client.getDataWriter().flush();
 
-				String fileInfo = "";
 				for (File file : fileList) {
-					fileInfo = fileInfo+getFileInformation(file)+"\r\n";
-					
+					fileInfo = fileInfo+getFileInformation(file);					
 				}
-				client.getDataWriter().write(fileInfo.getBytes(Charset.forName("UTF-8")));
-				client.getDataWriter().flush();
-				client.getDataSocket().close();
-				return 226;
 
 			} catch (IOException e) {
 				return 426;
@@ -46,18 +39,28 @@ public class ProcessLIST implements ProcessCommand {
 		} else {
 			File file = new File(client.getCurrentDirectory() + '/' + param[1]);
 			try {
-				String fileInfo = getFileInformation(file)+"\r\n";
-				System.out.print(fileInfo);
-				client.getDataWriter().write(fileInfo.getBytes(Charset.forName("UTF-8")));
-				client.getDataWriter().flush();
-				client.getDataSocket().close();
-				return 226;
+				fileInfo = getFileInformation(file);
 			} catch (IOException e) {
 				return 426;
 			}
 		}
+		System.out.println(fileInfo);
+		try {
+			client.getDataWriter().write(fileInfo.getBytes(Charset.forName("UTF-8")));
+			client.getDataWriter().flush();
+			client.getDataSocket().close();
+			return 226;
+		} catch (IOException e) {
+			return 426;
+		}
 	}
 	
+	/**
+	 * This function return the string describing a file in UNIX ls -l like format
+	 * @param file the file to get information
+	 * @return string describing the file in UNIX ls -l like format
+	 * @throws IOException
+	 */
 	public String getFileInformation(File file) throws IOException{
 		PosixFileAttributes attr = Files.readAttributes(
 				Paths.get(file.getAbsolutePath()),
@@ -65,8 +68,9 @@ public class ProcessLIST implements ProcessCommand {
 		char dir = '-';
 		if (file.isDirectory())
 			dir = 'd';
-		String chmod = PosixFilePermissions.toString(Files
-				.getPosixFilePermissions(file.toPath()));
+		if (Files.isSymbolicLink(file.toPath()))
+			dir = 'l';
+		String chmod = PosixFilePermissions.toString(Files.getPosixFilePermissions(file.toPath()));
 		String owner = attr.owner().getName();
 		String group = attr.group().getName();
 		long size = file.length();
@@ -74,8 +78,9 @@ public class ProcessLIST implements ProcessCommand {
 				.format(new Date(file.lastModified()));
 		String filename = file.getName();
 
-		String fileInfo = String.format("%c%s %s %s %6d %s %s\n",dir,chmod,owner,group,size,lastModif,filename);
+		String fileInfo = String.format("%c%s %s %s %6d %s %s\015\012",dir,chmod,owner,group,size,lastModif,filename);
 		return fileInfo;
+		
 	}
 
 }

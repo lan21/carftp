@@ -1,2 +1,2 @@
-testFtp password /home/rakotoarivony/developpement/CAR/tp1/testFtp
-allan allan /home/rakotoarivony/developpement/CAR/tp1/allan
+testFtp password /home/rakotoarivony/developpement/CAR/tp1/ftpFolder/sampleFolder
+allan allan /home/rakotoarivony/developpement/CAR/tp1/ftpFolder/allan
