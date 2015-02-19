@@ -2,6 +2,11 @@ package ftp.answer;
 
 import java.util.HashMap;
 
+/**
+ * the AnswerBuilder Class generate the appropriate message with the return code of a processCommand
+ * @author Tanguy Maréchal, Allan Rakotoharivoni
+ *
+ */
 public class AnswerBuilder {
 	public HashMap<Integer, String> anwswers;
 	
@@ -25,7 +30,6 @@ public class AnswerBuilder {
 		this.anwswers.put(331,"User name okay, need password.");
 		this.anwswers.put(332,"Need account for logging in");
 		
-
 		this.anwswers.put(421,"Service not available, closing control connection");
 		this.anwswers.put(425,"Can't open data connection");
 		this.anwswers.put(426,"Connection closed. Transfer aborted.");
@@ -39,6 +43,12 @@ public class AnswerBuilder {
 		this.anwswers.put(553,"Requested action not taken. File name not allowed.");
 	}
 
+	/**
+	 * Return the message depending of the code returned by a processCommand
+	 * @param codeAnswer the code which we need the message
+	 * @param additionalAnswer the additional message to add to the normal message obtained with the code
+	 * @return codeAnswer the answer depending of the processCommand code
+	 */
 	public String buildAnswer(int codeAnswer,String additionalAnswer){
 		
 		return codeAnswer+" "+this.anwswers.get(codeAnswer)+additionalAnswer;
