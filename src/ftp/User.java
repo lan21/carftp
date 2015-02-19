@@ -12,6 +12,14 @@ public class User {
 	private boolean writeAccess;
 	private boolean readAccess;
 	
+	/**
+	 * Constructor of the User class
+	 * @param username the name of the user
+	 * @param password the password of the user
+	 * @param directory the root directory of the user. He can't go up in it
+	 * @param writeAccess the capacity of the user to write into the folder
+	 * @param readAccess the capacity of the user to read into the folder
+	 */
 	public User(String username,String password,String directory,boolean writeAccess,boolean readAccess) {
 		this.username = username;
 		this.password = password;
