@@ -5,12 +5,12 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 
+import exception.UnauthorizedChangedDirectoryException;
 import ftp.answer.AnswerBuilder;
 import ftp.io.SocketReader;
 import ftp.io.SocketWriter;
 import ftp.process.ProcessBuilder;
 import ftp.process.ProcessCommand;
-import ftp.user.User;
 
 public class FTPClient extends Thread {
 	protected Socket commandSocket;
@@ -92,7 +92,10 @@ public class FTPClient extends Thread {
 		return commandWriter;
 	}
 	
-	public void setCurrentDirectory(String currentDirectory) {
+	public void setCurrentDirectory(String currentDirectory) throws UnauthorizedChangedDirectoryException {
+		if (!currentDirectory.startsWith(this.currentDirectory)){
+			throw new UnauthorizedChangedDirectoryException();
+		}
 		this.currentDirectory = currentDirectory;
 	}
 	

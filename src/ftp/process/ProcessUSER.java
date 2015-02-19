@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.Scanner;
 
+import exception.UnauthorizedChangedDirectoryException;
 import ftp.FTPClient;
 
 public class ProcessUSER implements ProcessCommand {
@@ -13,7 +14,9 @@ public class ProcessUSER implements ProcessCommand {
 	public int process(String[] param, FTPClient client) {
 		if(param[1].equals("anonymous")){
 			client.setUser("anonymous","","/home/rakotoarivony/developpement/CAR/tp1/ftpFolder/sampleFolder",false,true);
-			client.setCurrentDirectory(client.getDirectory());
+			try {
+				client.setCurrentDirectory(client.getDirectory());
+			} catch (UnauthorizedChangedDirectoryException e) {	}
 			return 230;			
 		}
 		else {

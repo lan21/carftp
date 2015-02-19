@@ -1,4 +1,4 @@
-package ftp.user;
+package ftp;
 
 /**
  * This class represents one user of the FTP service. It is determined by its username, its password and its home directory and its access on the directory

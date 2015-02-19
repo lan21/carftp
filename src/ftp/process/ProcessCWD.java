@@ -4,6 +4,7 @@ import java.io.File;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
+import exception.UnauthorizedChangedDirectoryException;
 import ftp.FTPClient;
 
 public class ProcessCWD implements ProcessCommand {
@@ -14,7 +15,9 @@ public class ProcessCWD implements ProcessCommand {
 		if(Files.exists(Paths.get(newCurrentDirectory))){
 			File currentFile = new File(newCurrentDirectory);
 			if (currentFile.isDirectory()){
-				client.setCurrentDirectory(newCurrentDirectory);
+				try {
+					client.setCurrentDirectory(newCurrentDirectory);
+				} catch (UnauthorizedChangedDirectoryException e) {}
 				client.setAdditionalAnswer("CWD successful "+client.getCurrentDirectory());
 				return 250;
 			}
@@ -52,6 +55,14 @@ public class ProcessCWD implements ProcessCommand {
 			newCurrentDirectory = client.getCurrentDirectory()+'/'+askedPath;
 		}
 		return newCurrentDirectory;
+
+		/*try {
+			client.setCurrentDirectory(param[1]);
+			client.setAdditionalAnswer(client.getCurrentDirectory());
+			return 250;
+		} catch (UnauthorizedChangedDirectoryException e) {
+			return 553;
+		}*/
 	}
 
 }
