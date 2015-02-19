@@ -12,7 +12,9 @@ public class ProcessUSER implements ProcessCommand {
 	@Override
 	public int process(String[] param, FTPClient client) {
 		if(param[1].equals("anonymous")){
-			return 230;
+			client.setUser("anonymous","","/",false,true);
+			client.setCurrentDirectory(client.getDirectory());
+			return 230;			
 		}
 		else {
 			Scanner scanfile;
@@ -27,18 +29,15 @@ public class ProcessUSER implements ProcessCommand {
 					}
 					else {
 						scanfile.close();
-						client.setUsername(userPassPath[0]);
-						client.setPassword(userPassPath[1]);
-						client.setDirectory(userPassPath[2]);
+						client.setUser(userPassPath[0],userPassPath[1],userPassPath[2],false,false);
 						return 331;
 					}
 				}
 				scanfile.close();
 			} catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+				return 451;
 			}
-			return 332;
+			return 430;
 		}
 	}
 

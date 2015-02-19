@@ -10,6 +10,7 @@ import ftp.io.SocketReader;
 import ftp.io.SocketWriter;
 import ftp.process.ProcessBuilder;
 import ftp.process.ProcessCommand;
+import ftp.user.User;
 
 public class FTPClient extends Thread {
 	protected Socket commandSocket;
@@ -18,10 +19,10 @@ public class FTPClient extends Thread {
 	protected Socket dataSocket;
 	protected DataOutputStream dataWriter;
 	protected DataInputStream dataReader;
-	private String username;
-	private String password;
-	private String directory;
-	private String additionalAnswer;
+	protected User user;
+	protected String additionalAnswer;
+	protected String currentDirectory; 
+	
 	
 	public DataInputStream getDataReader() {
 		return dataReader;
@@ -39,16 +40,18 @@ public class FTPClient extends Thread {
 		this.dataReader = dataReader;
 	}
 	
-	public void setDataSocket(Socket dataSocket) {
+	public void setDataSocket(Socket dataSocket) throws IOException {
 		this.dataSocket = dataSocket;
+		this.dataReader = new DataInputStream(dataSocket.getInputStream());
+		this.dataWriter = new DataOutputStream(dataSocket.getOutputStream());
 	}
 	
 	public void setDataWriter(DataOutputStream dataWriter) {
 		this.dataWriter = dataWriter;
 	}
 	
-	public String getPassword() {
-		return this.password;
+	public void setUser(String username,String password,String directory,boolean writeAccess,boolean readAccess) {
+		this.user = new User(username, password, directory,writeAccess,readAccess);
 	}
 	
 	public void setAdditionalAnswer(String additionalAnswer) {
@@ -56,23 +59,11 @@ public class FTPClient extends Thread {
 	}
 	
 	public String getUsername() {
-		return this.username;
+		return this.user.getUsername();
 	}
 	
 	public String getDirectory() {
-		return this.directory;
-	}
-
-	public void setDirectory(String directory) {
-		this.directory = directory;
-	}
-	
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	public void setUsername(String username) {
-		this.username = username;
+		return this.user.getDirectory();
 	}
 	
 	public SocketReader getCommandReader() {
@@ -87,40 +78,41 @@ public class FTPClient extends Thread {
 		return commandWriter;
 	}
 	
-	/*public FTPClient(Socket clientSocket) {
-		this.socketClient = clientSocket;
-		this.password = "test";
-		this.username = "test123";
-
-		System.out.println("Client thread creation.");
-		try {
-			this.br = new BufferedReader(new InputStreamReader(
-					this.socketClient.getInputStream()));
-			OutputStream ou;
-			ou = this.socketClient.getOutputStream();
-			OutputStreamWriter ouw = new OutputStreamWriter(ou);
-			this.bw = new BufferedWriter(ouw);
-			char[] ready = "220\r\n".toCharArray();
-			bw.write(ready);
-
-			System.out.println("avant flush");
-
-			bw.flush();
-
-			/* cette ligne en revanche s'affiche 
-			System.out.println("Client created.");
-
-		} catch (IOException e) {
-			System.out.println("error");
-			e.printStackTrace();
-		}
-	}*/
+	public void setCurrentDirectory(String currentDirectory) {
+		this.currentDirectory = currentDirectory;
+	}
 	
+	public String getCurrentDirectory() {
+		return currentDirectory;
+	}
+	
+	public boolean hasWriteAccess(){
+		return this.user.getWriteAccess();
+	}
+	
+	public boolean hasReadAccess(){
+		return this.user.getReadAccess();
+	}
+	
+	public void setWriteAccess(boolean access){
+		this.user.setWriteAccess(access);
+	}
+	
+	public void setReadAccess(boolean access){
+		this.user.setReadAccess(access);
+	}
+	
+	/**
+	 * Constructor of a FTPClient. It takes as a parameter a socket on which the client communicates with the FTPServer
+	 * @param clientSocket this socket must communicate with the FTPServer
+	 * @throws IOException if an I/O error occurs when creating the FTPClient or if the socket is not connected.
+	 */
 	public FTPClient(Socket clientSocket) throws IOException{
 		this.commandSocket = clientSocket;
 		this.commandWriter = new SocketWriter(clientSocket);
 		this.commandReader = new SocketReader(clientSocket);
 		this.additionalAnswer = "";
+		this.user = new User("","","",false,false);
 	}
 
 	public void processRequest() {
@@ -133,7 +125,6 @@ public class FTPClient extends Thread {
 			while (!this.commandSocket.isClosed()) {
 				
 				try {
-
 					String commande[] = this.commandReader.getCommand();
 					this.printReceivedCommand(commande);
 					ProcessCommand processCommand = processBuilder.processBuild(commande);
@@ -143,12 +134,16 @@ public class FTPClient extends Thread {
 					this.commandWriter.writeAnswer(answer);
 				}
 				catch (ClassNotFoundException e) {
-					answer = answerBuilder.buildAnswer(520,this.additionalAnswer);
+					answer = answerBuilder.buildAnswer(502,this.additionalAnswer);
+					this.commandWriter.writeAnswer(answer);
+				} catch (InstantiationException e) {
+					answer = answerBuilder.buildAnswer(502,this.additionalAnswer);
+					this.commandWriter.writeAnswer(answer);
+				} catch (IllegalAccessException e) {
+					answer = answerBuilder.buildAnswer(502,this.additionalAnswer);
 					this.commandWriter.writeAnswer(answer);
 				}
-				catch (Exception e) {
-					System.out.println(e.getMessage());
-				} 
+				this.additionalAnswer = "";
 
 			}
 			this.commandSocket.close();
@@ -167,85 +162,12 @@ public class FTPClient extends Thread {
 		System.out.println();
 	}
 
-	/*public void processRequest() {
-		try {
-			while (!this.socketClient.isClosed()) {				
-				try {
-					String commandeCourante = this.br.readLine();
-					System.out.println("recu : "+commandeCourante);					
-					bw.write("331\r\n".toCharArray());
-					bw.flush();
-				} catch (Exception e) {
-					System.out.println(e.getMessage());
-				} 
-
-			}
-			this.socketClient.close();
-			this.interrupt();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}*/
-
-	/*public void processPassword(String password)
-			throws UnknownPasswordException, IOException {
-		System.out.println(password.substring(0, 4));
-		if (!password.substring(0, 4).equalsIgnoreCase("PASS")) {
-			System.out.println("Password not ok");
-			try {
-				sw.write("331 User name okay, need password.".toCharArray());
-				sw.flush();
-			} catch (IOException e) {
-				throw new UnknownPasswordException("Server error");
-			}
-
-		} else {
-			//System.out.println("Password ok");
-			if (!password.substring(5).equals(this.password)) {
-				throw new UnknownPasswordException(
-						"331 User name okay, need password.\n");
-			}
-			else{
-				sw.write("200 OK. user logged in\r\n".toCharArray());
-				sw.flush();
-			}
-		}
-
-	}
-
-	public void processUser(String user) throws UnknownUserException,
-			IOException {
-		System.out.println(user.substring(0, 4));
-		if (!user.substring(0, 4).equalsIgnoreCase("user")) {
-			System.out.println("User not ok");
-			throw new UnknownUserException("");
-		} else {
-			System.out.println(user.substring(5));
-			System.out.println(!user.substring(5).equals(this.username));
-			if (!user.substring(5).equals(this.username)) {
-				throw new UnknownUserException("");
-			} else {
-				System.out.println("User ok");
-				sw.write("331 User name okay, need password.\n");
-				sw.flush();
-			}
-		}
-	}
-
-	public void processSyst(String user) throws UnknownUserException,
-			IOException {
-		System.out.println(user.substring(0, 4));
-		if (!user.substring(0, 4).equalsIgnoreCase("SYST")) {
-			throw new UnknownUserException("");
-		} else {
-			System.out.println("Syst ok");
-			sw.write("215 Unix.\n\r");
-			sw.flush();
-		}
-	}*/
-
 	@Override
 	public void run() {
 		this.processRequest();
+	}
+
+	public String getPassword() {
+		return this.user.getPassword();
 	}
 }

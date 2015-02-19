@@ -1,7 +1,5 @@
 package ftp.process;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.net.UnknownHostException;
@@ -18,14 +16,12 @@ public class ProcessPORT implements ProcessCommand {
 		
 		try {
 			client.setDataSocket(new Socket(ipAdress,dataPort));
-			client.setDataWriter(new DataOutputStream(client.getDataSocket().getOutputStream()));
-			client.setDataReader(new DataInputStream(client.getDataSocket().getInputStream()));
 		} catch (UnknownHostException e) {
 			return 434;
 		} catch (IOException e) {
 			return 425;
 		}
-		
+		client.setAdditionalAnswer("Port OK");
 		return 200;
 	}
 

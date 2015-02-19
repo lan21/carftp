@@ -12,7 +12,7 @@ public class ProcessGET implements ProcessCommand {
 		File[] file = directory.listFiles();
 		for (int i=0; i<file.length; i++){
 			if (file[i].getName().equals(param[1]) && file[i].isFile()){
-				client.getDataWriter().write(file[i]);
+				client.getDataWriter().write(new Byte(file[i]));
 			}
 			else {
 				return 550;

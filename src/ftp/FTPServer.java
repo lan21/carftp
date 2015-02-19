@@ -25,8 +25,7 @@ public class FTPServer extends ServerSocket implements Runnable{
 		try {			
 			while (true){
 				/*Client Socket creation*/
-				Socket socket = this.accept();
-				System.out.println("new client added");
+				Socket socket = this.accept();				
 				FTPClient t =  new FTPClient(socket);
 				t.start();
 			}
@@ -38,12 +37,14 @@ public class FTPServer extends ServerSocket implements Runnable{
 	
 	public Socket accept() throws IOException{
 		Socket client = super.accept();
+		System.out.println("new client added");
 		this.nbClients++;
 		listeClient.add(client);
 		return client;
 	}
 	
 	public void removeClient(Socket client){
+		System.out.println("One client has quit");
 		this.nbClients--;
 		this.listeClient.remove(client);
 	}

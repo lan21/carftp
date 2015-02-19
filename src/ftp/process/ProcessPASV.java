@@ -7,7 +7,8 @@ public class ProcessPASV implements ProcessCommand {
 	@Override
 	public int process(String[] param, FTPClient client) {
 		// TODO Auto-generated method stub
-		return 227;
+		// return 227;
+		return 502;
 	}
 
 }

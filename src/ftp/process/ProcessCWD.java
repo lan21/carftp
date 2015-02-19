@@ -6,8 +6,9 @@ public class ProcessCWD implements ProcessCommand {
 
 	@Override
 	public int process(String[] param, FTPClient client) {
-		client.setDirectory(param[1]);
-		return 212;
+		client.setCurrentDirectory(param[1]);
+		client.setAdditionalAnswer(client.getCurrentDirectory());
+		return 250;
 	}
 
 }

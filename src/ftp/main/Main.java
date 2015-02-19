@@ -4,8 +4,7 @@ import java.io.IOException;
 import ftp.FTPServer;
 
 public class Main {
-	
-	
+
 	public static void main(String[] args) {
 			FTPServer ftpserver;
 			try {
