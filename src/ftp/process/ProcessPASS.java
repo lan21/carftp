@@ -1,5 +1,6 @@
 package ftp.process;
 
+import exception.UnauthorizedChangedDirectoryException;
 import ftp.FTPClient;
 
 public class ProcessPASS implements ProcessCommand {
@@ -9,7 +10,11 @@ public class ProcessPASS implements ProcessCommand {
 		if(param[1].equals(client.getPassword())){
 			client.setReadAccess(true);
 			client.setWriteAccess(true);
-			client.setCurrentDirectory(client.getDirectory());
+			try {
+				client.setCurrentDirectory(client.getDirectory());
+			} catch (UnauthorizedChangedDirectoryException e) {
+				return 553;
+			}
 			return 230;
 		}
 		return 530;
