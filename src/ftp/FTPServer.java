@@ -41,7 +41,7 @@ public class FTPServer extends ServerSocket implements Runnable{
 			while (true){
 				/*Client Socket creation*/
 				Socket socket = this.accept();				
-				FTPClient t =  new FTPClient(socket);
+				FTPClient t =  new FTPClient(socket,this);
 				t.start();
 			}
 			

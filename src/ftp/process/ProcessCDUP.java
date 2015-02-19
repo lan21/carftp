@@ -6,7 +6,8 @@ public class ProcessCDUP implements ProcessCommand {
 
 	@Override
 	public int process(String[] param, FTPClient client) {
-		return (new ProcessCWD().process(param, client));
+		String newParam[] = {"CWD",".."};
+		return (new ProcessCWD().process(newParam, client));
 	}
 
 }

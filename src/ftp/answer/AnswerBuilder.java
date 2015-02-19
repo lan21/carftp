@@ -16,6 +16,7 @@ public class AnswerBuilder {
 		this.anwswers.put(212,"");
 		this.anwswers.put(215,"UNIX System Type");
 		this.anwswers.put(220,"Service ready for new user");
+		this.anwswers.put(221,"Bye bye");
 		this.anwswers.put(226,"Closing data connection. File transfert done");
 		this.anwswers.put(250,"");
 		this.anwswers.put(257,"");

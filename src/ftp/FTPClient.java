@@ -21,14 +21,32 @@ public class FTPClient extends Thread {
 	protected DataInputStream dataReader;
 	protected User user;
 	protected String additionalAnswer;
-	protected String currentDirectory; 
+	protected String currentDirectory;
+	protected String apparentDirectory;
+	protected FTPServer ftpServer;
 	
+	
+	
+	public FTPServer getFtpServer() {
+		return ftpServer;
+	}
+
+	public String getApparentDirectory() {
+		return apparentDirectory;
+	}
+
+	public void setApparentDirectory(String apparentDirectory) {
+		this.apparentDirectory = apparentDirectory;
+	}
+
 	/**
 	 * Constructor of a FTPClient. It takes as a parameter a socket on which the client communicates with the FTPServer
 	 * @param clientSocket this socket must communicate with the FTPServer
+	 * @param ftpServer 
 	 * @throws IOException if an I/O error occurs when creating the FTPClient or if the socket is not connected.
 	 */
-	public FTPClient(Socket clientSocket) throws IOException{
+	public FTPClient(Socket clientSocket, FTPServer ftpServer) throws IOException{
+		this.ftpServer = ftpServer;
 		this.commandSocket = clientSocket;
 		this.commandWriter = new SocketWriter(clientSocket);
 		this.commandReader = new SocketReader(clientSocket);
@@ -94,7 +112,7 @@ public class FTPClient extends Thread {
 	
 	public void setCurrentDirectory(String currentDirectory) throws UnauthorizedChangedDirectoryException {
 		if(this.currentDirectory !=null){
-			if (!currentDirectory.startsWith(this.currentDirectory)){
+			if ((!currentDirectory.startsWith(this.getDirectory())&&(!currentDirectory.equals(this.getDirectory())))){
 				throw new UnauthorizedChangedDirectoryException();
 			}
 		}
@@ -169,24 +187,30 @@ public class FTPClient extends Thread {
 					System.out.println(answer);
 					this.commandWriter.writeAnswer(answer);
 				}
+				catch(NullPointerException e){
+					break;
+				}
 				/*
 				 * Catch the 3 exceptions throwed by the ProcessBuilder
 				 * ClassNotFoundException, IllegalAccessException, InstantiationException
 				 * Generate the appropriate error message et write it on client terminal
 				 */
 				catch (Exception e) {
+					e.printStackTrace();
+					System.out.println(e.getMessage());
 					answer = answerBuilder.buildAnswer(502,this.additionalAnswer);
 					this.commandWriter.writeAnswer(answer);
 				}
 				this.additionalAnswer = "";
-
 			}
-			this.commandSocket.close();
+			this.ftpServer.removeClient(this.commandSocket);
 			this.commandReader.close();
 			this.commandWriter.close();
+			this.commandSocket.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		
 	}
 	
 	/**

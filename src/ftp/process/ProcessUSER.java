@@ -15,8 +15,9 @@ public class ProcessUSER implements ProcessCommand {
 		if(param[1].equals("anonymous")){
 			client.setUser("anonymous","","/home/rakotoarivony/developpement/CAR/tp1/ftpFolder/sampleFolder",false,true);
 			try {
-				client.setCurrentDirectory(client.getDirectory());
+				client.setCurrentDirectory(client.getDirectory());				
 			} catch (UnauthorizedChangedDirectoryException e) {	}
+			client.setApparentDirectory("/");
 			return 230;			
 		}
 		else {
@@ -32,13 +33,14 @@ public class ProcessUSER implements ProcessCommand {
 					else {
 						scanfile.close();
 						client.setUser(userPassPath[0],userPassPath[1],userPassPath[2],false,false);
+						client.setApparentDirectory("/");
 						return 331;
 					}
 				}
 				scanfile.close();
 			} catch (FileNotFoundException e) {
 				return 451;
-			}
+			}			
 			return 430;
 		}
 	}
