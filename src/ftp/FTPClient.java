@@ -93,8 +93,10 @@ public class FTPClient extends Thread {
 	}
 	
 	public void setCurrentDirectory(String currentDirectory) throws UnauthorizedChangedDirectoryException {
-		if (!currentDirectory.startsWith(this.currentDirectory)){
-			throw new UnauthorizedChangedDirectoryException();
+		if(this.currentDirectory !=null){
+			if (!currentDirectory.startsWith(this.currentDirectory)){
+				throw new UnauthorizedChangedDirectoryException();
+			}
 		}
 		this.currentDirectory = currentDirectory;
 	}

@@ -14,13 +14,21 @@ public class ProcessMKD implements ProcessCommand {
 
 	@Override
 	public int process(String[] param, FTPClient client) {
-		String path = client.getCurrentDirectory()+"/"+param[1];
-		File dir = new File(path);
-		if (dir.mkdir()){
-			return 212;
+		if(client.hasWriteAccess()){
+			String path = client.getCurrentDirectory()+"/"+param[1];
+			File dir = new File(path);
+			if (dir.mkdir()){
+				client.setAdditionalAnswer("Directory "+param[1]+" created");
+				return 212;
+			}
+			else {
+				client.setAdditionalAnswer("Requested action aborted.");
+				return 551;
+			}
 		}
-		else {
-			return 550;
+		else{
+			client.setAdditionalAnswer(" Creation of directory denied");
+			return 532;
 		}
 	}
 	

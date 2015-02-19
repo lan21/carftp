@@ -17,7 +17,10 @@ public class ProcessCWD implements ProcessCommand {
 			if (currentFile.isDirectory()){
 				try {
 					client.setCurrentDirectory(newCurrentDirectory);
-				} catch (UnauthorizedChangedDirectoryException e) {}
+				} catch (UnauthorizedChangedDirectoryException e) {
+					client.setAdditionalAnswer("Access denied");
+					return 550;
+				}
 				client.setAdditionalAnswer("CWD successful "+client.getCurrentDirectory());
 				return 250;
 			}
