@@ -34,7 +34,8 @@ public class AnswerBuilder {
 		
 		this.anwswers.put(502,"Command not implemented");		
 		this.anwswers.put(530,"Not logged in");
-	}
+		this.anwswers.put(553,"Requested action not taken. File name not allowed.");
+		}
 
 	public String buildAnswer(int codeAnswer,String additionalAnswer){
 		return codeAnswer+" "+this.anwswers.get(codeAnswer)+additionalAnswer;
