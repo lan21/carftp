@@ -10,7 +10,6 @@ import ftp.io.SocketReader;
 import ftp.io.SocketWriter;
 import ftp.process.ProcessBuilder;
 import ftp.process.ProcessCommand;
-import ftp.user.User;
 
 public class FTPClient extends Thread {
 	protected Socket commandSocket;
