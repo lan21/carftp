@@ -7,23 +7,39 @@ import java.util.Scanner;
 import exception.UnauthorizedChangedDirectoryException;
 import ftp.FTPClient;
 
+/**
+ * Class ProcessUSER
+ * This class is used when the client is identifying
+ * @author Tanguy Maréchal, Allan Rakotoarivony
+ *
+ */
 public class ProcessUSER implements ProcessCommand {
 
 
 	@Override
+	/**
+	 * This method proccess the USER command
+	 * if the user is anonymous, it has read-only permissions
+	 * @param param the parameters of the command
+	 * @param client the client who is identifying
+	 * @return 230 if anonymous
+	 * 		   331 if registered
+	 * 		   430 if not registered
+	 * 		   434 if there is an error while reading the database
+	 */
 	public int process(String[] param, FTPClient client) {
 		if(param[1].equals("anonymous")){
 			client.setUser("anonymous","","/home/rakotoarivony/developpement/CAR/tp1/ftpFolder/sampleFolder",false,true);
 			try {
 				client.setCurrentDirectory(client.getDirectory());				
-			} catch (UnauthorizedChangedDirectoryException e) {	}
+			} catch (UnauthorizedChangedDirectoryException e) {}
 			client.setApparentDirectory("/");
 			return 230;			
 		}
 		else {
 			Scanner scanfile;
 			try {
-				scanfile = new Scanner(new File("data/log.txt"));
+				scanfile = new Scanner(new File("utils/log.txt"));
 
 				while (scanfile.hasNextLine()){
 					String[] userPassPath = scanfile.nextLine().trim().split(" ");
@@ -39,7 +55,7 @@ public class ProcessUSER implements ProcessCommand {
 				}
 				scanfile.close();
 			} catch (FileNotFoundException e) {
-				return 451;
+				return 434;
 			}			
 			return 430;
 		}

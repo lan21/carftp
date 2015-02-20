@@ -9,7 +9,7 @@ package ftp.process;
 public class ProcessBuilder {
 
 	/**
-	 * Return a processCommand dependin of the first index of the string passed in parameter
+	 * Return a processCommand depending of the first index of the string passed in parameter
 	 * @param processString a string array made of the two parts of the command send by the client
 	 * @return the processCommand depending of the string array passed in parameters
 	 * @throws ClassNotFoundException the class 

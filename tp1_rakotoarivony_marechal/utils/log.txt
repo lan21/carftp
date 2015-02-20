@@ -1,0 +1,2 @@
+test test /home/rakotoarivony/developpement/CAR/tp1/ftpFolder/sampleFolder
+allan allan /home/rakotoarivony/developpement/CAR/tp1/ftpFolder/allan
