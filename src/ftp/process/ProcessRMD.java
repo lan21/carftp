@@ -25,6 +25,10 @@ public class ProcessRMD implements ProcessCommand {
 		if(client.hasWriteAccess()){
 			String path = client.getCurrentDirectory()+"/"+param[1];
 			File dir = new File(path);
+			if (!dir.isDirectory()){
+				client.setAdditionalAnswer(param[1]+"is not a directory");
+				return 550;
+			}
 			if (dir.delete()){
 				client.setAdditionalAnswer("Directory "+param[1]+" deleted");
 				return 250;

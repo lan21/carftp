@@ -9,6 +9,7 @@ import java.nio.file.attribute.PosixFileAttributes;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 import ftp.FTPClient;
 import ftp.answer.AnswerBuilder;
@@ -77,11 +78,11 @@ public class ProcessLIST implements ProcessCommand {
 		String owner = attr.owner().getName();
 		String group = attr.group().getName();
 		long size = file.length();
-		String lastModif = new SimpleDateFormat("MMM dd HH:mm")
+		String lastModif = new SimpleDateFormat("MMM dd HH:mm",Locale.ENGLISH)
 				.format(new Date(file.lastModified()));
 		String filename = file.getName();
 
-		String fileInfo = String.format("%c%s %s %s %6d %s %s\015\012",dir,chmod,owner,group,size,lastModif,filename);
+		String fileInfo = String.format("%c%s 1 %s %s %13d %s %s\015\012",dir,chmod,owner,group,size,lastModif,filename);
 		return fileInfo;
 		
 	}
