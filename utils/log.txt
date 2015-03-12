@@ -1,2 +1,3 @@
 test test /home/rakotoarivony/developpement/CAR/tp1/ftpFolder/sampleFolder
-allan allan /home/rakotoarivony/developpement/CAR/tp1/ftpFolder/allan
+#allan allan /home/rakotoarivony/developpement/CAR/tp1/ftpFolder/allan
+allan allan /home/raynak/Universite/M1S2/CAR/FTP/carftp/ftpFolder/allan
